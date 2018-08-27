@@ -1,5 +1,5 @@
 const xhr = new XMLHttpRequest()
-xhr.open('HEAD', window.location.href, true)
+xhr.open('GET', window.location.href, true)
 xhr.send()
 xhr.onreadystatechange = () => {
   if (xhr.readyState === 4) {
