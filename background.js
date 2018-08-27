@@ -46,3 +46,42 @@ xhr.onreadystatechange = () => {
     }
   }
 }
+
+;(function() {
+  // https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
+  function trackEvent(category, action, opt_label) {
+    var label = opt_label || ''
+    _gaq.push(['_trackEvent', category, action, label])
+  }
+
+  // https://developer.chrome.com/extensions/runtime#method-getManifest
+  function reportVersion() {
+    var version = 'v' + chrome.runtime.getManifest().version
+    trackEvent('Background', 'version', version)
+  }
+
+  function reportContentEvent() {
+    trackEvent('Content', 'some_event', '')
+  }
+
+  // ...
+
+  function init() {
+    reportVersion()
+
+    // Listen to request from content script.
+    chrome.runtime.onMessage.addListener(function(
+      request,
+      sender,
+      sendResponse
+    ) {
+      someOperation()
+      reportContentEvent()
+      return true
+    })
+  }
+
+  chrome.storage.sync.get(DEFAULT_OPTIONS, function(items) {
+    init()
+  })
+})()
